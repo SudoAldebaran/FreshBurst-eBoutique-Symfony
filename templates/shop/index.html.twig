@@ -1,0 +1,15 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}FreshBurst - Accueil{% endblock %}
+
+{% block body %}
+    <h1>Bienvenue chez FreshBurst</h1>
+    <p>Découvrez nos produits frais pour la bouche !</p>
+    <h2>Catégories</h2>
+    <ul>
+        {% for category in categories %}
+            <li><a href="{{ path('app_category', {'id': category.id}) }}">{{ category.name }}</a></li>
+        {% endfor %}
+    </ul>
+    <a href="{{ path('app_cart') }}">Voir le panier</a>
+{% endblock %}

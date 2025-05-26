@@ -1,0 +1,9 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}FreshBurst - Inscription Réussie{% endblock %}
+
+{% block body %}
+    <h1>Inscription Réussie !</h1>
+    <p>Votre compte a été créé avec succès. Vous pouvez maintenant vous connecter pour passer votre commande.</p>
+    <a href="{{ path('app_login') }}">Se connecter</a>
+{% endblock %}

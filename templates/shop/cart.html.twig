@@ -1,0 +1,66 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}FreshBurst - Panier{% endblock %}
+
+{% block body %}
+    <h1>Votre panier</h1>
+    {% for message in app.flashes('success') %}
+        <div class="alert alert-success">{{ message }}</div>
+    {% endfor %}
+    {% for message in app.flashes('error') %}
+        <div class="alert alert-danger">{{ message }}</div>
+    {% endfor %}
+    {% if cartItems|length > 0 %}
+        <table border="1">
+            <thead>
+                <tr>
+                    <th>Produit</th>
+                    <th>Prix unitaire</th>
+                    <th>Quantité</th>
+                    <th>Total ligne</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in cartItems %}
+                    <tr>
+                        <td>{{ item.product.name }}</td>
+                        <td>{{ item.product.price }} €</td>
+                        <td>
+                            <form action="{{ path('app_update_cart', {'id': item.product.id}) }}" method="post" style="display:inline;">
+                                <button type="submit" name="action" value="decrease">-</button>
+                                <span>{{ item.quantity }}</span>
+                                <button type="submit" name="action" value="increase">+</button>
+                            </form>
+                        </td>
+                        <td>{{ (item.product.price * item.quantity)|number_format(2) }} €</td>
+                        <td>
+                            <a href="{{ path('app_remove_from_cart', {'id': item.product.id}) }}">Supprimer</a>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+            <tfoot>
+                <tr>
+                    <td colspan="3">Sous-total</td>
+                    <td colspan="2">{{ subtotal|number_format(2) }} €</td>
+                </tr>
+                <tr>
+                    <td colspan="3">Frais de transport</td>
+                    <td colspan="2">{{ shippingCost|number_format(2) }} €</td>
+                </tr>
+                <tr>
+                    <td colspan="3">Total</td>
+                    <td colspan="2">{{ (subtotal + shippingCost)|number_format(2) }} €</td>
+                </tr>
+            </tfoot>
+        </table>
+        <form method="post" action="{{ path('app_cart_validate') }}" onsubmit="return confirm('Êtes-vous sûr de vouloir valider votre commande ?');">
+            <input type="hidden" name="_token" value="{{ csrf_token('validate_cart') }}">
+            <button type="submit">Valider la commande</button>
+        </form>
+    {% else %}
+        <p>Votre panier est vide.</p>
+    {% endif %}
+    <a href="{{ path('app_home') }}">Retour à l'accueil</a>
+{% endblock %}

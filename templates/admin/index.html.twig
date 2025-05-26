@@ -1,0 +1,12 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}FreshBurst - Back-office{% endblock %}
+
+{% block body %}
+    <h1>Back-office FreshBurst</h1>
+    <p>Bienvenue dans l'espace d'administration.</p>
+    <ul>
+        <li><a href="{{ path('admin_categories') }}">Gérer les catégories</a></li>
+        <li><a href="{{ path('admin_products') }}">Gérer les produits</a></li>
+    </ul>
+{% endblock %}

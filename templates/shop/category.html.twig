@@ -1,0 +1,27 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}FreshBurst - {{ category.name }}{% endblock %}
+
+{% block body %}
+    <h1>{{ category.name }}</h1>
+    <p>Explorez nos produits dans cette catégorie.</p>
+    <h2>Produits</h2>
+    {% if products|length > 0 %}
+        <ul>
+            {% for product in products %}
+                <li>
+                    {{ product.name }} - {{ product.price }} € 
+                    {% if product.description %}
+                        <p>{{ product.description }}</p>
+                    {% endif %}
+                    <a href="{{ path('app_add_to_cart', {'id': product.id}) }}">Ajouter au panier</a>
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>Aucun produit dans cette catégorie pour le moment.</p>
+    {% endif %}
+    <a href="{{ path('app_home') }}">Retour aux catégories</a>
+    <br>
+    <a href="{{ path('app_cart') }}">Voir le panier</a>
+{% endblock %}
