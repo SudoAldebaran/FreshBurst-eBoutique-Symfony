@@ -33,7 +33,9 @@
                     <tbody>
                         {% for item in cartItems %}
                             <tr>
-                                <td>{{ item.product.name }}</td>
+                                <td>
+                                    <a href="{{ path('app_product_detail', {'id': item.product.id}) }}">{{ item.product.name }}</a>
+                                </td>
                                 <td>
                                     {% if item.product.image %}
                                         <img src="{{ asset('images/products/' ~ item.product.image) }}" alt="{{ item.product.name }}" class="img-thumbnail" style="max-height: 50px; object-fit: cover;">
