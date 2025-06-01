@@ -3,64 +3,91 @@
 {% block title %}FreshBurst - Panier{% endblock %}
 
 {% block body %}
-    <h1>Votre panier</h1>
-    {% for message in app.flashes('success') %}
-        <div class="alert alert-success">{{ message }}</div>
-    {% endfor %}
-    {% for message in app.flashes('error') %}
-        <div class="alert alert-danger">{{ message }}</div>
-    {% endfor %}
-    {% if cartItems|length > 0 %}
-        <table border="1">
-            <thead>
-                <tr>
-                    <th>Produit</th>
-                    <th>Prix unitaire</th>
-                    <th>Quantité</th>
-                    <th>Total ligne</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for item in cartItems %}
-                    <tr>
-                        <td>{{ item.product.name }}</td>
-                        <td>{{ item.product.price }} €</td>
-                        <td>
-                            <form action="{{ path('app_update_cart', {'id': item.product.id}) }}" method="post" style="display:inline;">
-                                <button type="submit" name="action" value="decrease">-</button>
-                                <span>{{ item.quantity }}</span>
-                                <button type="submit" name="action" value="increase">+</button>
-                            </form>
-                        </td>
-                        <td>{{ (item.product.price * item.quantity)|number_format(2) }} €</td>
-                        <td>
-                            <a href="{{ path('app_remove_from_cart', {'id': item.product.id}) }}">Supprimer</a>
-                        </td>
-                    </tr>
-                {% endfor %}
-            </tbody>
-            <tfoot>
-                <tr>
-                    <td colspan="3">Sous-total</td>
-                    <td colspan="2">{{ subtotal|number_format(2) }} €</td>
-                </tr>
-                <tr>
-                    <td colspan="3">Frais de transport</td>
-                    <td colspan="2">{{ shippingCost|number_format(2) }} €</td>
-                </tr>
-                <tr>
-                    <td colspan="3">Total</td>
-                    <td colspan="2">{{ (subtotal + shippingCost)|number_format(2) }} €</td>
-                </tr>
-            </tfoot>
-        </table>
-        <form method="post" action="{{ path('app_cart_validate') }}" onsubmit="return confirm('Êtes-vous sûr de vouloir valider votre commande ?');">
-            <input type="hidden" name="_token" value="{{ csrf_token('validate_cart') }}">
-            <button type="submit">Valider la commande</button>
-        </form>
-    {% else %}
-        <p>Votre panier est vide.</p>
-    {% endif %}
-    <a href="{{ path('app_home') }}">Retour à l'accueil</a>
+    <div class="container my-5">
+        <h1 class="mb-4 text-center">Votre panier</h1>
+        {% for message in app.flashes('success') %}
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        {% endfor %}
+        {% for message in app.flashes('error') %}
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        {% endfor %}
+        {% if cartItems|length > 0 %}
+            <div class="table-responsive">
+                <table class="table table-striped table-hover">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Produit</th>
+                            <th>Image</th>
+                            <th>Prix unitaire</th>
+                            <th>Quantité</th>
+                            <th>Total ligne</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in cartItems %}
+                            <tr>
+                                <td>{{ item.product.name }}</td>
+                                <td>
+                                    {% if item.product.image %}
+                                        <img src="{{ asset('images/products/' ~ item.product.image) }}" alt="{{ item.product.name }}" class="img-thumbnail" style="max-height: 50px; object-fit: cover;">
+                                    {% else %}
+                                        <img src="https://via.placeholder.com/50" alt="{{ item.product.name }}" class="img-thumbnail" style="max-height: 50px; object-fit: cover;">
+                                    {% endif %}
+                                </td>
+                                <td>{{ item.product.price }} €</td>
+                                <td>
+                                    <form action="{{ path('app_update_cart', {'id': item.product.id}) }}" method="post" class="d-flex align-items-center">
+                                        <button type="submit" name="action" value="decrease" class="btn btn-sm btn-outline-secondary me-2">-</button>
+                                        <span class="mx-2">{{ item.quantity }}</span>
+                                        <button type="submit" name="action" value="increase" class="btn btn-sm btn-outline-secondary ms-2">+</button>
+                                    </form>
+                                </td>
+                                <td>{{ (item.product.price * item.quantity)|number_format(2) }} €</td>
+                                <td>
+                                    <a href="{{ path('app_remove_from_cart', {'id': item.product.id}) }}" class="btn btn-sm btn-danger">Supprimer</a>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                    <tfoot>
+                        <tr>
+                            <td colspan="4" class="text-end"><strong>Sous-total</strong></td>
+                            <td>{{ subtotal|number_format(2) }} €</td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td colspan="4" class="text-end"><strong>Frais de transport</strong></td>
+                            <td>{{ shippingCost|number_format(2) }} €</td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td colspan="4" class="text-end"><strong>Total</strong></td>
+                            <td>{{ (subtotal + shippingCost)|number_format(2) }} €</td>
+                            <td></td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+            <div class="text-center mt-4">
+                <form method="post" action="{{ path('app_cart_validate') }}" onsubmit="return confirm('Êtes-vous sûr de vouloir valider votre commande ?');">
+                    <input type="hidden" name="_token" value="{{ csrf_token('validate_cart') }}">
+                    <button type="submit" class="btn btn-primary btn-lg">Valider la commande</button>
+                </form>
+            </div>
+        {% else %}
+            <div class="alert alert-info text-center">
+                Votre panier est vide.
+            </div>
+        {% endif %}
+        <div class="text-center mt-3">
+            <a href="{{ path('app_home') }}" class="btn btn-secondary">Retour à l'accueil</a>
+        </div>
+    </div>
 {% endblock %}

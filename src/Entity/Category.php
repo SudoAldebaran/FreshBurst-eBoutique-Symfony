@@ -18,11 +18,11 @@ class Category
     #[ORM\Column(length: 255)]
     private ?string $name = null;
 
-    /**
-     * @var Collection<int, Product>
-     */
-    #[ORM\OneToMany(targetEntity: Product::class, mappedBy: 'category')]
+    #[ORM\OneToMany(mappedBy: 'category', targetEntity: Product::class)]
     private Collection $products;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $image = null;
 
     public function __construct()
     {
@@ -42,7 +42,6 @@ class Category
     public function setName(string $name): static
     {
         $this->name = $name;
-
         return $this;
     }
 
@@ -60,19 +59,27 @@ class Category
             $this->products->add($product);
             $product->setCategory($this);
         }
-
         return $this;
     }
 
     public function removeProduct(Product $product): static
     {
         if ($this->products->removeElement($product)) {
-            // set the owning side to null (unless already changed)
             if ($product->getCategory() === $this) {
                 $product->setCategory(null);
             }
         }
+        return $this;
+    }
 
+    public function getImage(): ?string
+    {
+        return $this->image;
+    }
+
+    public function setImage(?string $image): static
+    {
+        $this->image = $image;
         return $this;
     }
 }

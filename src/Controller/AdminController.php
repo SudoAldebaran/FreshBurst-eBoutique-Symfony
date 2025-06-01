@@ -83,10 +83,17 @@ class AdminController extends AbstractController
 
     // Gestion des produits
     #[Route('/products', name: 'admin_products')]
-    public function products(ProductRepository $productRepository): Response
+    public function products(Request $request, ProductRepository $productRepository): Response
     {
+        $sort = $request->query->get('sort', 'name');
+        $order = $request->query->get('order', 'asc');
+
+        $products = $productRepository->findAllSorted($sort, $order);
+
         return $this->render('admin/products.html.twig', [
-            'products' => $productRepository->findAll(),
+            'products' => $products,
+            'sort' => $sort,
+            'order' => $order,
         ]);
     }
 

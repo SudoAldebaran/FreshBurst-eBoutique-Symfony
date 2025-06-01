@@ -6,6 +6,7 @@ use App\Entity\Product;
 use App\Repository\CategoryRepository;
 use App\Repository\ProductRepository;
 use App\Service\CartManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -36,18 +37,53 @@ class ShopController extends AbstractController
         ]);
     }
 
-    #[Route('/add-to-cart/{id}', name: 'app_add_to_cart')]
-    public function addToCart(int $id, ProductRepository $productRepository, CartManager $cartManager): Response
+    #[Route('/product/{id}', name: 'app_product_detail')]
+    public function productDetail(int $id, ProductRepository $productRepository, EntityManagerInterface $entityManager): Response
     {
         $product = $productRepository->find($id);
         if (!$product) {
             throw $this->createNotFoundException('Product not found');
         }
 
-        $cartManager->addToCart($product->getId(), 1);
+        // Utilisation d'une requête SQL native pour récupérer des produits suggérés aléatoires
+        $conn = $entityManager->getConnection();
+        $sql = 'SELECT id FROM product WHERE id != :currentProduct ORDER BY RAND() LIMIT 3';
+        $stmt = $conn->prepare($sql);
+        $result = $stmt->executeQuery(['currentProduct' => $product->getId()]);
+        $suggestedProductIds = $result->fetchAllAssociative();
+
+        // Récupérer les entités Product correspondantes
+        $suggestedProducts = [];
+        foreach ($suggestedProductIds as $suggestedId) {
+            $suggestedProduct = $productRepository->find($suggestedId['id']);
+            if ($suggestedProduct) {
+                $suggestedProducts[] = $suggestedProduct;
+            }
+        }
+
+        return $this->render('shop/product_detail.html.twig', [
+            'product' => $product,
+            'suggestedProducts' => $suggestedProducts,
+        ]);
+    }
+
+    #[Route('/add-to-cart/{id}', name: 'app_add_to_cart')]
+    public function addToCart(int $id, Request $request, ProductRepository $productRepository, CartManager $cartManager): Response
+    {
+        $product = $productRepository->find($id);
+        if (!$product) {
+            throw $this->createNotFoundException('Product not found');
+        }
+
+        $quantity = (int)$request->request->get('quantity', 1);
+        if ($quantity < 1) {
+            $quantity = 1;
+        }
+
+        $cartManager->addToCart($product->getId(), $quantity);
         $this->addFlash('success', 'Produit ajouté au panier !');
 
-        return $this->redirectToRoute('app_category', ['id' => $product->getCategory()->getId()]);
+        return $this->redirectToRoute('app_cart');
     }
 
     #[Route('/cart', name: 'app_cart')]
@@ -116,14 +152,11 @@ class ShopController extends AbstractController
     #[Route('/cart/validate', name: 'app_cart_validate', methods: ['POST'])]
     public function validateCart(Request $request, CartManager $cartManager): Response
     {
-        // Vérifie que l'utilisateur est connecté
         if (!$this->getUser()) {
             throw $this->createAccessDeniedException('Vous devez être connecté pour valider une commande.');
         }
 
-        // Vérifie le jeton CSRF pour plus de sécurité
         if ($this->isCsrfTokenValid('validate_cart', $request->request->get('_token'))) {
-            // Vide le panier après validation
             $cartManager->clearCart();
             $this->addFlash('success', 'Commande validée avec succès ! Merci pour votre achat.');
             return $this->redirectToRoute('app_cart');

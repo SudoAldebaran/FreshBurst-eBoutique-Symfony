@@ -3,10 +3,28 @@
 {% block title %}FreshBurst - Back-office{% endblock %}
 
 {% block body %}
-    <h1>Back-office FreshBurst</h1>
-    <p>Bienvenue dans l'espace d'administration.</p>
-    <ul>
-        <li><a href="{{ path('admin_categories') }}">Gérer les catégories</a></li>
-        <li><a href="{{ path('admin_products') }}">Gérer les produits</a></li>
-    </ul>
+    <div class="container">
+        <h1 class="my-4 text-center">Back-office FreshBurst</h1>
+        <p class="lead text-center">Bienvenue dans l'espace d'administration.</p>
+        <div class="row justify-content-center">
+            <div class="col-md-6 col-lg-4 mb-4">
+                <div class="card text-center">
+                    <div class="card-body">
+                        <h5 class="card-title">Gérer les catégories</h5>
+                        <p class="card-text">Ajoutez, modifiez ou supprimez des catégories.</p>
+                        <a href="{{ path('admin_categories') }}" class="btn btn-primary">Accéder</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-4 mb-4">
+                <div class="card text-center">
+                    <div class="card-body">
+                        <h5 class="card-title">Gérer les produits</h5>
+                        <p class="card-text">Ajoutez, modifiez ou supprimez des produits.</p>
+                        <a href="{{ path('admin_products') }}" class="btn btn-primary">Accéder</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 {% endblock %}

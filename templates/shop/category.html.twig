@@ -5,23 +5,54 @@
 {% block body %}
     <h1>{{ category.name }}</h1>
     <p>Explorez nos produits dans cette catégorie.</p>
-    <h2>Produits</h2>
-    {% if products|length > 0 %}
-        <ul>
-            {% for product in products %}
-                <li>
-                    {{ product.name }} - {{ product.price }} € 
-                    {% if product.description %}
-                        <p>{{ product.description }}</p>
-                    {% endif %}
-                    <a href="{{ path('app_add_to_cart', {'id': product.id}) }}">Ajouter au panier</a>
-                </li>
-            {% endfor %}
-        </ul>
-    {% else %}
-        <p>Aucun produit dans cette catégorie pour le moment.</p>
-    {% endif %}
+    <div class="row">
+        {% for product in products %}
+            <div class="col-md-4 mb-4">
+                <div class="card">
+                    <a href="{{ path('app_product_detail', {'id': product.id}) }}">
+                        {% if product.image %}
+                            <img src="{{ asset('images/products/' ~ product.image) }}" class="card-img-top" alt="{{ product.name }}">
+                        {% else %}
+                            <img src="https://via.placeholder.com/150" class="card-img-top" alt="{{ product.name }}">
+                        {% endif %}
+                    </a>
+                    <div class="card-body">
+                        <h5 class="card-title"><a href="{{ path('app_product_detail', {'id': product.id}) }}">{{ product.name }}</a></h5>
+                        <p class="card-text">{{ product.description }}</p>
+                        <p class="card-text"><strong>{{ product.price }} €</strong></p>
+                        <form method="post" action="{{ path('app_add_to_cart', {'id': product.id}) }}">
+                            <div class="mb-3">
+                                <label for="quantity-{{ product.id }}" class="form-label">Quantité :</label>
+                                <div class="d-flex align-items-center">
+                                    <button type="button" class="btn btn-outline-secondary btn-sm me-2" onclick="updateQuantity('quantity-{{ product.id }}', -1)">-</button>
+                                    <input type="number" id="quantity-{{ product.id }}" name="quantity" value="1" min="1" readonly class="form-control text-center" style="width: 80px;">
+                                    <button type="button" class="btn btn-outline-secondary btn-sm ms-2" onclick="updateQuantity('quantity-{{ product.id }}', 1)">+</button>
+                                </div>
+                            </div>
+                            <div>
+                                <button type="submit" class="btn btn-success">Ajouter au panier</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        {% else %}
+            <p>Aucun produit dans cette catégorie pour le moment.</p>
+        {% endfor %}
+    </div>
     <a href="{{ path('app_home') }}">Retour aux catégories</a>
     <br>
     <a href="{{ path('app_cart') }}">Voir le panier</a>
+
+    <script>
+        function updateQuantity(inputId, change) {
+            const quantityInput = document.getElementById(inputId);
+            let currentQuantity = parseInt(quantityInput.value);
+            currentQuantity += change;
+            if (currentQuantity < 1) {
+                currentQuantity = 1; // Quantité minimale
+            }
+            quantityInput.value = currentQuantity;
+        }
+    </script>
 {% endblock %}

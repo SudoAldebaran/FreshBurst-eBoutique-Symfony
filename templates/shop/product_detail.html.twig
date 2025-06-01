@@ -17,14 +17,13 @@
                 <h4 class="text-primary mb-3">{{ product.price }} €</h4>
                 <p><strong>Catégorie :</strong> {{ product.category ? product.category.name : 'Aucune' }}</p>
                 <p><strong>Description :</strong> {{ product.description ?: 'Aucune description disponible.' }}</p>
-                <form id="add-to-cart-form-{{ product.id }}" class="add-to-cart-form">
-                    <input type="hidden" name="_token" value="{{ csrf_token('add_to_cart') }}">
+                <form method="post" action="{{ path('app_add_to_cart', {'id': product.id}) }}">
                     <div class="mb-3">
-                        <label for="quantity-main" class="form-label">Quantité :</label>
+                        <label for="quantity" class="form-label">Quantité :</label>
                         <div class="d-flex align-items-center">
-                            <button type="button" class="btn btn-outline-secondary btn-sm me-2" onclick="updateQuantity('quantity-main', -1)">-</button>
-                            <input type="text" id="quantity-main" name="quantity" value="1" class="form-control text-center" style="width: 80px;" onkeydown="return false;">
-                            <button type="button" class="btn btn-outline-secondary btn-sm ms-2" onclick="updateQuantity('quantity-main', 1)">+</button>
+                            <button type="button" class="btn btn-outline-secondary btn-sm me-2" onclick="updateQuantity('quantity', -1)">-</button>
+                            <input type="number" id="quantity" name="quantity" value="1" min="1" readonly class="form-control text-center" style="width: 80px;">
+                            <button type="button" class="btn btn-outline-secondary btn-sm ms-2" onclick="updateQuantity('quantity', 1)">+</button>
                         </div>
                     </div>
                     <div>
@@ -52,13 +51,12 @@
                             <div class="card-body">
                                 <h5 class="card-title"><a href="{{ path('app_product_detail', {'id': suggested.id}) }}">{{ suggested.name }}</a></h5>
                                 <p class="card-text"><strong>{{ suggested.price }} €</strong></p>
-                                <form id="add-to-cart-form-{{ suggested.id }}" class="add-to-cart-form">
-                                    <input type="hidden" name="_token" value="{{ csrf_token('add_to_cart') }}">
+                                <form method="post" action="{{ path('app_add_to_cart', {'id': suggested.id}) }}">
                                     <div class="mb-3">
                                         <label for="quantity-{{ suggested.id }}" class="form-label">Quantité :</label>
                                         <div class="d-flex align-items-center">
                                             <button type="button" class="btn btn-outline-secondary btn-sm me-2" onclick="updateQuantity('quantity-{{ suggested.id }}', -1)">-</button>
-                                            <input type="text" id="quantity-{{ suggested.id }}" name="quantity" value="1" class="form-control text-center" style="width: 80px;" onkeydown="return false;">
+                                            <input type="number" id="quantity-{{ suggested.id }}" name="quantity" value="1" min="1" readonly class="form-control text-center" style="width: 80px;">
                                             <button type="button" class="btn btn-outline-secondary btn-sm ms-2" onclick="updateQuantity('quantity-{{ suggested.id }}', 1)">+</button>
                                         </div>
                                     </div>
@@ -77,47 +75,19 @@
     <script>
         function updateQuantity(inputId, change) {
             const quantityInput = document.getElementById(inputId);
-            let currentQuantity = parseInt(quantityInput.value);
+            if (!quantityInput) {
+                console.error('Element with ID "' + inputId + '" not found');
+                return;
+            }
+            
+            let currentQuantity = parseInt(quantityInput.value) || 1;
             currentQuantity += change;
+            
             if (currentQuantity < 1) {
                 currentQuantity = 1; // Quantité minimale
             }
+            
             quantityInput.value = currentQuantity;
         }
-
-        // Gestion de l'ajout au panier via AJAX
-        document.querySelectorAll('.add-to-cart-form').forEach(form => {
-            form.addEventListener('submit', function(event) {
-                event.preventDefault();
-                const formData = new FormData(form);
-                const url = form.action;
-
-                fetch(url, {
-                    method: 'POST',
-                    body: formData
-                })
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error('Erreur réseau ou serveur : ' + response.status);
-                    }
-                    return response.json();
-                })
-                .then(data => {
-                    if (data.success) {
-                        // Afficher le message dans la modale
-                        document.getElementById('cartAddMessage').textContent = data.message;
-                        // Afficher la modale
-                        const modal = new bootstrap.Modal(document.getElementById('cartAddModal'));
-                        modal.show();
-                    } else {
-                        alert('Erreur : ' + data.message);
-                    }
-                })
-                .catch(error => {
-                    console.error('Erreur lors de l\'ajout au panier:', error);
-                    alert('Une erreur est survenue lors de l\'ajout au panier.');
-                });
-            });
-        });
     </script>
 {% endblock %}
