@@ -1,7 +1,10 @@
+/* styles.css */
+
 :root {
     --primary-green: #28a745; /* Vert principal */
     --navbar-green: #2ecc71;  /* Vert plus clair et élégant pour la navbar */
-    --primary-blue: #007bff;  /* Bleu */
+    --primary-blue: #831ea8;  /* Violet (remplace le bleu) */
+    --primary-hover: #6b1891; /* Une nuance plus foncée pour l'effet de survol */
 }
 
 body {
@@ -20,7 +23,7 @@ body {
 
 .navbar-brand:hover,
 .navbar-nav .nav-link:hover {
-    color: #f8f9fa; /* Légère variation au survol */
+    color: var(--primary-hover); /* Utilise la couleur de survol violet foncé */
 }
 
 .navbar-brand .shop-name {
@@ -40,6 +43,13 @@ body {
 .btn-primary {
     background-color: var(--primary-blue);
     border-color: var(--primary-blue);
+}
+
+.btn-primary:hover,
+.btn-primary:focus,
+.btn-primary:active {
+    background-color: var(--primary-hover);
+    border-color: var(--primary-hover);
 }
 
 .card {
@@ -63,57 +73,67 @@ footer {
     width: auto; /* Garde les proportions */
 }
 
-.logo {
+/* Nouveau logo */
+.mint-logo {
     position: relative;
-    width: 40px;
-    height: 60px;
+    width: 50px; /* Réduit pour la navbar */
+    height: 50px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
-/* Redéfinition pour une feuille de menthe avec trois lobes plus pointus */
-.leaf-left {
+.leaf {
     position: absolute;
-    width: 18px;
-    height: 35px;
-    background: white;
-    border-radius: 80% 10% 90% 10%;
-    transform: rotate(-45deg);
-    top: 15px;
-    left: 0;
+    width: 15px; /* Réduit proportionnellement */
+    height: 20px;
+    background: linear-gradient(45deg, #2d5a2d, #4a8f4a);
+    border-radius: 50% 0% 50% 0%;
+    transform-origin: bottom center;
 }
 
-.leaf-right {
-    position: absolute;
-    width: 18px;
-    height: 35px;
-    background: white;
-    border-radius: 10% 80% 10% 90%;
-    transform: rotate(45deg);
-    top: 15px;
-    right: 0;
-}
-
-/* Lobe central plus pointu */
-.stem {
-    position: absolute;
-    width: 18px;
-    height: 40px;
-    background: white;
-    border-radius: 10% 10% 90% 90%;
-    transform: rotate(0deg);
-    top: 5px;
-    left: 11px;
-}
-
-/* Ajout d'une veine centrale pour plus de réalisme */
-.stem::before {
+.leaf::before {
     content: '';
     position: absolute;
-    width: 2px;
-    height: 80%;
-    background: rgba(0, 0, 0, 0.1);
+    top: 50%;
     left: 50%;
-    top: 10%;
+    width: 1px; /* Réduit proportionnellement */
+    height: 10px;
+    background: linear-gradient(to bottom, #1a4a1a, #2d5a2d);
     transform: translateX(-50%);
+}
+
+.leaf-1 {
+    transform: rotate(-30deg) translateY(-5px);
+    background: linear-gradient(45deg, #2d5a2d, #5cb85c);
+}
+
+.leaf-2 {
+    transform: rotate(0deg) translateY(-6px);
+    background: linear-gradient(45deg, #357a35, #6cc16c);
+    z-index: 2;
+}
+
+.leaf-3 {
+    transform: rotate(30deg) translateY(-5px);
+    background: linear-gradient(45deg, #2d5a2d, #5cb85c);
+}
+
+/* Animation au survol */
+.mint-logo:hover .leaf {
+    transition: transform 0.3s ease;
+}
+
+.mint-logo:hover .leaf-1 {
+    transform: rotate(-35deg) translateY(-6px);
+}
+
+.mint-logo:hover .leaf-2 {
+    transform: rotate(0deg) translateY(-8px);
+}
+
+.mint-logo:hover .leaf-3 {
+    transform: rotate(35deg) translateY(-6px);
 }
 
 /* Styles spécifiques pour la page panier */
@@ -145,9 +165,10 @@ footer {
     color: #721c24;
 }
 
+/* Remplacement de la couleur bleue dans alert-info */
 .alert-info {
-    background-color: #d1ecf1;
-    color: #0c5460;
+    background-color: #e6d7f1; /* Une teinte violette claire pour remplacer le bleu */
+    color: #4b1c6b; /* Une teinte violette foncée pour le texte */
 }
 
 /* Styles spécifiques pour la page Mon profil */
@@ -163,10 +184,126 @@ footer {
 
 .form-control:focus {
     border-color: var(--primary-blue);
-    box-shadow: 0 0 5px rgba(0, 123, 255, 0.3);
+    box-shadow: 0 0 5px var(--primary-blue);
 }
 
 .btn-primary.btn-lg {
     padding: 10px 30px;
     font-size: 1.1rem;
+}
+
+/* Bannière */
+.hero-section {
+    position: relative;
+    background: url('/images/hero-bg.jpg') no-repeat center center/cover;
+    color: white;
+    padding: 120px 0;
+    text-align: center;
+    min-height: 400px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%; /* Pleine largeur */
+    margin: 0; /* Supprime les marges */
+}
+
+.hero-section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.6); /* Overlay sombre pour la lisibilité */
+}
+
+.hero-section .hero-content {
+    position: relative;
+    max-width: 800px;
+    padding: 0 20px; /* Ajoute un padding pour les petits écrans */
+}
+
+.hero-section h1 {
+    font-size: 3.5rem;
+    font-weight: bold;
+    margin-bottom: 20px;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.hero-section p {
+    font-size: 1.5rem;
+    margin-bottom: 30px;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+.hero-section .btn {
+    font-size: 1.2rem;
+    padding: 12px 24px;
+    border-radius: 25px;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+.hero-section .btn:hover {
+    transform: scale(1.05);
+}
+
+/* Cartes des catégories */
+.category-card {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    border: none;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.category-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+}
+
+.category-card img {
+    height: 200px;
+    object-fit: cover;
+}
+
+.category-card .card-body {
+    text-align: center;
+    padding: 20px;
+}
+
+.category-card .card-title {
+    font-size: 1.5rem;
+    margin-bottom: 15px;
+}
+
+.category-card .btn {
+    font-size: 1rem;
+    padding: 8px 16px;
+}
+
+/* Surcharge des liens */
+a {
+    color: var(--primary-blue);
+}
+
+a:hover {
+    color: var(--primary-hover);
+}
+
+/* Surcharge des liens dans le footer (garder blanc mais ajuster les survols) */
+footer a {
+    color: white;
+}
+
+footer a:hover {
+    color: var(--primary-blue);
+}
+
+/* Surcharge des éléments spécifiques dans le BackOffice */
+.table-light a {
+    color: var(--primary-blue);
+}
+
+.table-light a:hover {
+    color: var(--primary-hover);
 }

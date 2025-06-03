@@ -2,28 +2,46 @@
 
 {% block title %}FreshBurst - Catégories{% endblock %}
 
+{% block breadcrumb %}
+    <!-- On masque le fil d'Ariane sur la page d'accueil -->
+{% endblock %}
+
+{% block hero %}
+    <!-- Section bannière -->
+    <section class="hero-section">
+        <div class="hero-content">
+            <h1>Bienvenue chez FreshBurst !</h1>
+            <p>Vos produits préférés pour une haleine fraîche : chewing-gums, bonbons et bien plus encore !</p>
+            <a href="#categories" class="btn btn-primary btn-lg">Explorer nos produits</a>
+        </div>
+    </section>
+{% endblock %}
+
 {% block body %}
-    <h1 class="my-4">Catégories</h1>
-    <p class="lead">Découvrez nos catégories de produits frais pour la bouche.</p>
-    <div class="row">
-        {% for category in categories %}
-            <div class="col-md-4 mb-4">
-                <div class="card">
-                    <a href="{{ path('app_category', {'id': category.id}) }}">
-                        {% if category.image %}
-                            <img src="{{ asset('images/categories/' ~ category.image) }}" class="card-img-top" alt="{{ category.name }}">
-                        {% else %}
-                            <img src="https://via.placeholder.com/150" class="card-img-top" alt="{{ category.name }}">
-                        {% endif %}
-                    </a>
-                    <div class="card-body">
-                        <h5 class="card-title">{{ category.name }}</h5>
-                        <a href="{{ path('app_category', {'id': category.id}) }}" class="btn btn-primary">Voir les produits</a>
+    <!-- Section catégories -->
+    <div class="container my-5">
+        <h1 class="my-4" id="categories">Catégories</h1>
+        <p class="lead">Découvrez nos catégories de produits frais pour la bouche.</p>
+        <div class="row">
+            {% for category in categories %}
+                <div class="col-md-4 mb-4">
+                    <div class="card category-card">
+                        <a href="{{ path('app_category', {'id': category.id}) }}">
+                            {% if category.image %}
+                                <img src="{{ asset('images/categories/' ~ category.image) }}" class="card-img-top" alt="{{ category.name }}">
+                            {% else %}
+                                <img src="https://via.placeholder.com/150" class="card-img-top" alt="{{ category.name }}">
+                            {% endif %}
+                        </a>
+                        <div class="card-body">
+                            <h5 class="card-title">{{ category.name }}</h5>
+                            <a href="{{ path('app_category', {'id': category.id}) }}" class="btn btn-primary">Voir les produits</a>
+                        </div>
                     </div>
                 </div>
-            </div>
-        {% else %}
-            <p>Aucune catégorie disponible pour le moment.</p>
-        {% endfor %}
+            {% else %}
+                <p>Aucune catégorie disponible pour le moment.</p>
+            {% endfor %}
+        </div>
     </div>
 {% endblock %}
